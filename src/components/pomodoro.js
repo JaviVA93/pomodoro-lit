@@ -5,13 +5,15 @@ class Pomodoro extends LitElement {
 
     static properties = {
         timer: 0,
+        running: false,
     };
 
     constructor() {
         super()
-        
-        this.timer = 60
-        this.controller = new AbortController();
+
+        this.timerInitValue = 60
+        this.restartCountdown()
+        this.controller = new AbortController()
         this.running = false
     }
 
@@ -43,15 +45,18 @@ class Pomodoro extends LitElement {
     `
 
     startCountdown() {
-        if (this.running)
+        if (this.running || this.timer <= 0)
             return
 
         this.controller = new AbortController()
-        animationInterval(1000, this.controller.signal, (time) => {
-            this.timer = this.timer - 1;
-            console.log('tick!', time);
-        });
         this.running = true
+
+        animationInterval(1000, this.controller.signal, (time) => {
+            this.timer--
+
+            if (this.timer <= 0)
+                this.stopCountdown()            
+        });
     }
 
     stopCountdown() {
@@ -62,13 +67,18 @@ class Pomodoro extends LitElement {
         this.running = false
     }
 
+    restartCountdown() {
+        this.stopCountdown()
+        this.timer = this.timerInitValue
+    }
+
     render() {
         return html`
             <h3>Pomodoro</h3>
             <h1>${this.timer}</h1>
             <div class="buttonsWrapper">
-                <button @click=${() => this.startCountdown()}>Start</button>
-                <button @click=${() => this.stopCountdown()}>Stop</button>
+                <button @click=${() => this.startCountdown()}>${(!this.running) ? 'Start' : 'Pause'}</button>
+                <button @click=${() => this.restartCountdown()}>Restart</button>
             </div>
         `
     }

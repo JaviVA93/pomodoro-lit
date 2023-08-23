@@ -70,9 +70,9 @@ class Pomodoro extends LitElement {
 
     renderTimeRemain() {
         let {minutes, remainingSeconds} = secondsToMinutesAndSeconds(this.timer)
-        if (minutes === 0) 
+        if (minutes < 10) 
             minutes = '0' + minutes.toString()
-        if (remainingSeconds === 0) 
+        if (remainingSeconds < 10) 
             remainingSeconds = '0' + remainingSeconds.toString()
 
         return `${minutes}:${remainingSeconds}`
@@ -102,7 +102,7 @@ class Pomodoro extends LitElement {
                         Level
                         <select @change=${(e) => this.changeLevel(e)}>
                             <option value="${LEVELS.LOW}">Low (10min)</option>
-                            <option value="${LEVELS.MID}">Medium (20min)</option>
+                            <option selected value="${LEVELS.MID}">Medium (20min)</option>
                             <option value="${LEVELS.HIGH}">High (40min)</option>
                         </select>
                     </label>
@@ -142,6 +142,12 @@ class Pomodoro extends LitElement {
         }
         .buttonsWrapper button {
             padding: 5px 15px;
+        }
+        label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
     `
 }

@@ -1,8 +1,8 @@
-export default function animationInterval(ms, signal, callback) {
+export function animationInterval(ms, signal, callback) {
     const start = document.timeline ? document.timeline.currentTime : performance.now();
 
     function frame(time) {
-        if (signal.aborted) 
+        if (signal.aborted)
             return;
         callback(time);
         scheduleFrame(time);
@@ -17,4 +17,10 @@ export default function animationInterval(ms, signal, callback) {
     }
 
     scheduleFrame(start);
+}
+
+export function secondsToMinutesAndSeconds(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return {minutes, remainingSeconds};
 }

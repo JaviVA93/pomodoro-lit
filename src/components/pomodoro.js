@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "lit";
-import animationInterval from "../utils/animationInterval";
+import { animationInterval, secondsToMinutesAndSeconds } from "../utils/utilities";
 import { VIEWS, LEVELS } from "../utils/constants";
 
 class Pomodoro extends LitElement {
@@ -59,12 +59,23 @@ class Pomodoro extends LitElement {
     changeLevel(event) {
         this.level = parseInt(event.target.value)
         this.restartCountdown()
+        this.changeView()
     }
 
     changeView() {
         (this.view === VIEWS.POMODORO)
             ? this.view = VIEWS.SETTINGS
             : this.view = VIEWS.POMODORO
+    }
+
+    renderTimeRemain() {
+        let {minutes, remainingSeconds} = secondsToMinutesAndSeconds(this.timer)
+        if (minutes === 0) 
+            minutes = '0' + minutes.toString()
+        if (remainingSeconds === 0) 
+            remainingSeconds = '0' + remainingSeconds.toString()
+
+        return `${minutes}:${remainingSeconds}`
     }
 
     render() {
@@ -77,7 +88,7 @@ class Pomodoro extends LitElement {
             ${(this.view === VIEWS.POMODORO)
                 ? html`
                     <h3>Pomodoro</h3>
-                    <h1>${this.timer}</h1>
+                    <h1>${this.renderTimeRemain()}</h1>
                     <div class="buttonsWrapper">
                         <button @click=${() => this.handleStartStopButton()}>
                             ${(!this.running) ? 'Start' : 'Pause'}

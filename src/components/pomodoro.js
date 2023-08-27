@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { animationInterval, secondsToMinutesAndSeconds } from "../utils/utilities";
+import { animationInterval, convertMilliseconds } from "../utils/utilities";
 import { VIEWS, LEVELS } from "../utils/constants";
 
 class Pomodoro extends LitElement {
@@ -41,8 +41,8 @@ class Pomodoro extends LitElement {
         this.controller = new AbortController()
         this.running = true
 
-        animationInterval(1000, this.controller.signal, (time) => {
-            this.timer--
+        animationInterval(10, this.controller.signal, (time) => {
+            this.timer = this.timer - 10
 
             if (this.timer <= 0)
                 this.stopCountdown()
@@ -81,13 +81,14 @@ class Pomodoro extends LitElement {
     }
 
     renderTimeRemain() {
-        let { minutes, remainingSeconds } = secondsToMinutesAndSeconds(this.timer)
+        let { minutes, seconds, milliseconds } = convertMilliseconds(this.timer)
         if (minutes < 10)
             minutes = '0' + minutes.toString()
-        if (remainingSeconds < 10)
-            remainingSeconds = '0' + remainingSeconds.toString()
-
-        return `${minutes}:${remainingSeconds}`
+        if (seconds < 10)
+            seconds = '0' + seconds.toString()
+        if (milliseconds < 10)
+            milliseconds = '0' + milliseconds.toString()
+        return `${minutes}:${seconds}:${milliseconds.toString().slice(0,2)}`
     }
 
     render() {

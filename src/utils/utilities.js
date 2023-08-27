@@ -22,5 +22,25 @@ export function animationInterval(ms, signal, callback) {
 export function secondsToMinutesAndSeconds(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    return {minutes, remainingSeconds};
+    return { minutes, remainingSeconds };
+}
+
+export function convertMilliseconds(milliseconds) {
+    // Convert milliseconds to minutes
+    const minutes = Math.floor(milliseconds / (1000 * 60));
+
+    // Calculate remaining milliseconds after subtracting minutes
+    milliseconds -= minutes * 1000 * 60;
+
+    // Convert remaining milliseconds to seconds
+    const seconds = Math.floor(milliseconds / 1000);
+
+    // Calculate remaining milliseconds after subtracting seconds
+    milliseconds -= seconds * 1000;
+
+    return {
+        minutes: minutes,
+        seconds: seconds,
+        milliseconds: milliseconds
+    };
 }

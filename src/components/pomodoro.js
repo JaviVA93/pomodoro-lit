@@ -1,5 +1,5 @@
 import { LitElement, html, css } from "lit";
-import { animationInterval, convertMilliseconds } from "../utils/utilities";
+import { callFunctionEachFrame, convertMilliseconds } from "../utils/utilities";
 import { VIEWS, LEVELS } from "../utils/constants";
 
 class Pomodoro extends LitElement {
@@ -29,6 +29,7 @@ class Pomodoro extends LitElement {
 
         this.controller = new AbortController()
         this.running = false
+        this.startTimestamp = null
         this.level = LEVELS.MID
         this.view = VIEWS.POMODORO
         this.restartCountdown()
@@ -40,9 +41,10 @@ class Pomodoro extends LitElement {
 
         this.controller = new AbortController()
         this.running = true
+        const endTimestamp = new Date().getTime() + this.timer
 
-        animationInterval(10, this.controller.signal, (time) => {
-            this.timer = this.timer - 10
+        callFunctionEachFrame(this.controller.signal, () => {
+            this.timer = endTimestamp - new Date().getTime()
 
             if (this.timer <= 0)
                 this.stopCountdown()
@@ -185,6 +187,13 @@ class Pomodoro extends LitElement {
         .buttonsWrapper button {
             border: 0;
             border-radius: 4px;
+            transition: all 0.25s ease-out;
+        }
+        .buttonsWrapper button:hover {
+            outline: 1px solid white;
+        }
+        .buttonsWrapper button:active {
+            filter: brightness(0.8);
         }
         .startBtn {
             font-size: 22px;

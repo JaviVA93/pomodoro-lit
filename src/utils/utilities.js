@@ -1,41 +1,49 @@
-export function animationInterval(ms, signal, callback) {
-    const start = document.timeline ? document.timeline.currentTime : performance.now();
 
-    function frame(time) {
+/**
+ * 
+ * @param {AbortSignal} signal 
+ * @param {Function} callback 
+ */
+export function callFunctionEachFrame(signal, callback) {
+    function frame() {
         if (signal.aborted)
-            return;
-        callback(time);
-        scheduleFrame(time);
+            return
+
+        callback()
+        scheduleFrame()
     }
 
-    function scheduleFrame(time) {
-        const elapsed = time - start;
-        const roundedElapsed = Math.round(elapsed / ms) * ms;
-        const targetNext = start + roundedElapsed + ms;
-        const delay = targetNext - performance.now();
-        setTimeout(() => requestAnimationFrame(frame), delay);
+    function scheduleFrame() {
+        requestAnimationFrame(frame)
     }
-
-    scheduleFrame(start);
+    scheduleFrame();
 }
 
+
+
+/**
+ * 
+ * @param {number} seconds 
+ * @returns {{minutes: number, remainingSeconds: number}}
+ */
 export function secondsToMinutesAndSeconds(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
     return { minutes, remainingSeconds };
 }
 
-export function convertMilliseconds(milliseconds) {
-    // Convert milliseconds to minutes
-    const minutes = Math.floor(milliseconds / (1000 * 60));
 
-    // Calculate remaining milliseconds after subtracting minutes
+
+/**
+ * 
+ * @param {number} milliseconds 
+ * @returns {{minutes: number, seconds: number, milliseconds: number}}
+ */
+export function convertMilliseconds(milliseconds) {
+    const minutes = Math.floor(milliseconds / (1000 * 60));
     milliseconds -= minutes * 1000 * 60;
 
-    // Convert remaining milliseconds to seconds
     const seconds = Math.floor(milliseconds / 1000);
-
-    // Calculate remaining milliseconds after subtracting seconds
     milliseconds -= seconds * 1000;
 
     return {
@@ -44,3 +52,4 @@ export function convertMilliseconds(milliseconds) {
         milliseconds: milliseconds
     };
 }
+

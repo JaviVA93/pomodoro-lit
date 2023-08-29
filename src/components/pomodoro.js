@@ -1,6 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { callFunctionEachFrame, convertMilliseconds } from "../utils/utilities";
 import { VIEWS, LEVELS } from "../utils/constants";
+import playAudio from "../utils/audio";
 
 class Pomodoro extends LitElement {
 
@@ -44,10 +45,12 @@ class Pomodoro extends LitElement {
         const endTimestamp = new Date().getTime() + this.timer
 
         callFunctionEachFrame(this.controller.signal, () => {
-            this.timer = endTimestamp - new Date().getTime()
-
-            if (this.timer <= 0)
+            if (this.timer <= 0) {
                 this.stopCountdown()
+                this.pomodoroEnds()
+            }
+            else
+                this.timer = endTimestamp - new Date().getTime()
         });
     }
 
@@ -57,6 +60,11 @@ class Pomodoro extends LitElement {
 
         this.controller.abort()
         this.running = false
+    }
+
+    pomodoroEnds() {
+        this.timer = 0
+        playAudio().alarm()
     }
 
     restartCountdown() {
@@ -80,6 +88,7 @@ class Pomodoro extends LitElement {
         (this.view === VIEWS.POMODORO)
             ? this.view = VIEWS.SETTINGS
             : this.view = VIEWS.POMODORO
+        playAudio().pop()
     }
 
     renderTimeRemain() {
@@ -107,10 +116,10 @@ class Pomodoro extends LitElement {
                     <h3>Pomodoro</h3>
                     <h1>${this.renderTimeRemain()}</h1>
                     <div class="buttonsWrapper">
-                        <button class="startBtn" @click=${() => this.handleStartStopButton()}>
+                        <button class="${(this.timer !== 0) ? 'bigButton' : 'smallButton'}" @click=${() => this.handleStartStopButton()}>
                             ${(!this.running) ? 'Start' : 'Pause'}
                         </button>
-                        <button class="restartBtn" @click=${() => this.restartCountdown()}>
+                        <button class="${(this.timer !== 0) ? 'smallButton' : 'bigButton'}" @click=${() => this.restartCountdown()}>
                             Restart
                         </button>
                     </div>`
@@ -195,11 +204,11 @@ class Pomodoro extends LitElement {
         .buttonsWrapper button:active {
             filter: brightness(0.8);
         }
-        .startBtn {
+        .bigButton {
             font-size: 22px;
             padding: 15px 25px;
         }
-        .restartBtn {
+        .smallButton {
             padding: 5px 15px;
         }
         label {

@@ -4,8 +4,7 @@ export const VIEWS = {
 }
 
 export const LEVELS = {
-    // LOW: 10 * 60 * 1000,
-    LOW: 5000,
+    LOW: 10 * 60 * 1000,
     MID: 20 * 60 * 1000,
     HIGH: 40 * 60 * 1000,
 }
